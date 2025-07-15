@@ -1,0 +1,27 @@
+header {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid var(--border-color, #ccc);
+}
+
+button {
+    margin-left: auto;
+    border: var(--border);
+    border-radius: 2.5px;
+    color: var(--background-color);
+    padding: 10px;
+    background-color: var(--color);
+}
+
+h1, h2 {
+    text-align: center;
+    color: var(--color);
+}
+

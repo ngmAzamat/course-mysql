@@ -1,0 +1,31 @@
+<header>
+    <h1>Добро пожаловать в чат</h1>
+    <button id="theme-toggle">Сменить тему</button>
+</header>
+<%= form_with url: "/send", method: :post, local: true do %>
+    <%= text_field_tag :nickname, nil, placeholder: "Ваш ник", required: true %>
+    <%= text_field_tag :content, nil, placeholder: "Сообщение", id: "long-input", required: true %>
+    <%= submit_tag "Отправить" %>
+<% end %>
+<hr>
+<div class="messages">
+    <h2>Все сообщения:</h2>
+    <% my_id = cookies[:client_id] %>
+
+    <% my_id = cookies[:client_id] %>
+
+    <% if Message.any? %>
+      <ul class="messages">
+        <% Message.all.each do |message| %>
+          <% own = message.client_id == my_id %>
+          <li class="<%= own ? 'own-message' : 'other-message' %>">
+            <strong><%= message.nickname %>:</strong>
+            <%= message.content %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>Пока нет сообщений. Будьте первым!</p>
+    <% end %>
+
+</div>

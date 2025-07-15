@@ -1,0 +1,39 @@
+.messages {
+    padding-bottom: 80px;
+    scroll-padding-bottom: 80px;
+    max-height: calc(100vh - 160px); /* учитываем высоту формы, заголовков и отступов */
+    overflow-y: auto;
+  
+}
+  
+  ul {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+li {
+    display: inline-block;
+    max-width: 45%;            
+    color: var(--standart-white);
+    padding: 20px;
+    border-radius: 5px;
+    /* border: var(--border); */
+    word-wrap: break-word;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.own-message {
+    align-self: flex-end;
+    background-color: var(--light-blue);
+}
+
+.other-message {
+    align-self: flex-start;
+    background-color: gray;
+}
+p {
+    text-align: center;
+    color: var(--color);
+}

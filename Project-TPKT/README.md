@@ -277,3 +277,91 @@ puts "Отключено от сервера"
 Открой один терминал: `ruby server.rb`
 Открой несколько других терминалов: `ruby client.rb`
 Пиши сообщения — они будут отправлены всем другим клиентам.
+
+
+### база данных
+
+Отлично — `sqlite3` установлен! ✅
+
+Теперь давай пошагово **добавим базу данных в чат-сервер.**
+
+---
+
+### ✅ Шаг 1: Создание базы и таблицы
+
+Создай файл `setup_db.rb`:
+
+```ruby
+# setup_db.rb
+require 'sqlite3'
+
+db = SQLite3::Database.new "chat.db"
+
+db.execute <<-SQL
+  CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nickname TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+SQL
+
+puts "База данных и таблица созданы."
+```
+
+Теперь выполни в терминале:
+
+```bash
+ruby setup_db.rb
+```
+
+---
+
+### ✅ Шаг 2: Подключаемся к базе в сервере
+
+В начало файла `server.rb` (где `require 'socket'`), добавь:
+
+```ruby
+require 'sqlite3'
+
+DB = SQLite3::Database.new("chat.db")
+DB.results_as_hash = true
+```
+
+---
+
+### ✅ Шаг 3: Сохраняем сообщения
+
+Найди в коде строку:
+
+```ruby
+puts "#{nickname}: #{msg}"
+```
+
+и после неё вставь:
+
+```ruby
+DB.execute("INSERT INTO messages (nickname, content) VALUES (?, ?)", [nickname, msg])
+```
+
+Теперь сообщения будут сохраняться в базу.
+
+---
+
+### ✅ (Опционально): Команда `/history` для клиента
+
+Чтобы клиент мог написать `/history` и получить 10 последних сообщений, перед проверкой `msg.start_with?("/nick ")` вставь:
+
+```ruby
+if msg.strip == "/history"
+  rows = DB.execute("SELECT nickname, content, created_at FROM messages ORDER BY id DESC LIMIT 10")
+  rows.reverse.each do |row|
+    send_tpkt(sock, "[#{row['created_at']}] #{row['nickname']}: #{row['content']}")
+  end
+  next
+end
+```
+
+---
+
+Если хочешь, я могу прям *вставить в твой сервер* целиком и выдать готовый код. Нужно?
