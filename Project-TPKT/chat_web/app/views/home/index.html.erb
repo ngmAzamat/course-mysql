@@ -4,7 +4,11 @@
 </header>
 <%= form_with url: "/send", method: :post, local: true do %>
     <%= text_field_tag :nickname, nil, placeholder: "Ваш ник", required: true %>
-    <%= text_field_tag :content, nil, placeholder: "Сообщение", id: "long-input", required: true %>
+    <%= text_field_tag :content, nil, placeholder: "Сообщение", id: "message-input", class: "long-input", required: true %>
+    <button type="button" id="emoji-button">😊</button>
+    <div id="emoji-panel" class="hidden">
+        <emoji-picker id="picker"></emoji-picker>
+    </div>
     <%= submit_tag "Отправить" %>
 <% end %>
 <hr>
@@ -17,7 +21,7 @@
     <% if Message.any? %>
       <ul class="messages">
         <% Message.all.each do |message| %>
-          <% own = message.client_id == my_id %>
+          <% own = (message.client_id == cookies[:client_id]) || (message.client_id == 'local-console-id') %>
           <li class="<%= own ? 'own-message' : 'other-message' %>">
             <strong><%= message.nickname %>:</strong>
             <%= message.content %>
@@ -25,6 +29,7 @@
         <% end %>
       </ul>
     <% else %>
+      <p>Всего сообщений: <%= Message.count %></p>
       <p>Пока нет сообщений. Будьте первым!</p>
     <% end %>
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -24,7 +25,43 @@
   <body class="light">
     <%= yield %>
   </body>
-  <script>
+  <script type="module">
+    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+
+    const button = document.getElementById('emoji-button');
+    const panel = document.getElementById('emoji-panel');
+    const picker = document.getElementById('picker');
+    const input = document.getElementById('message-input'); // твое поле ввода
+
+    button.addEventListener('click', () => {
+      panel.classList.toggle('hidden');
+    });
+
+    picker.addEventListener('emoji-click', event => {
+      input.value += event.detail.unicode;
+      input.focus();
+      panel.classList.add('hidden');
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const emojiButton = document.getElementById("emoji-button");
+      const emojiPanel = document.getElementById("emoji-panel");
+      const emojiPicker = document.getElementById("picker");
+      const input = document.getElementById("long-input");
+  
+      // Вставка эмодзи в поле ввода
+      emojiPicker.addEventListener("emoji-click", event => {
+        const emoji = event.detail.unicode;
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const before = input.value.substring(0, start);
+        const after = input.value.substring(end);
+        input.value = before + emoji + after;
+        input.focus();
+        input.selectionStart = input.selectionEnd = start + emoji.length;
+      });
+    });
+
     const toggleButton = document.getElementById("theme-toggle");
 
     // Функция смены темы
@@ -51,5 +88,7 @@
       const msgBox = document.querySelector('.messages');
       if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
     };
+
+
   </script>
 </html>

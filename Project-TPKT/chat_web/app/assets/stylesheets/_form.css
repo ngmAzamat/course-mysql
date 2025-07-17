@@ -23,7 +23,7 @@ input[type="submit"] {
     background-color: var(--standart-blue);
 }
 
-#long-input {
+.long-input {
     width: 100%;
 }
 
@@ -35,4 +35,17 @@ button:hover,
 button:focus {
   border-color: var(--standart-red);
   color: var(--standart-red);             /* внутри текста тоже красный */
+}
+
+
+#emoji-panel {
+    position: absolute;
+    bottom: 50px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.hidden {
+    display: none;
 }

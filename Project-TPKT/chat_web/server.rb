@@ -1,8 +1,16 @@
+require_relative 'config/environment'
 require 'socket' # знаете для работы с TCP надо socket(это труба между клиентом и сервером)
 require 'sqlite3' # библиотека для работы с базами данных
+require 'time'
+require 'active_record'
+require './app/models/message.rb' # укажи путь, если другой
+require_relative './database' # теперь server.rb будет использовать эту настройку
 
-DB = SQLite3::Database.new("chat.db")
-DB.results_as_hash = true
+
+ActiveRecord::Base.establish_connection(
+  adapter: 'sqlite3',
+  database: 'db/development.sqlite3'
+)
 
 clients = [] # клиентов много - а много это массив
 
@@ -70,10 +78,9 @@ loop do
         end
         # тут понятно что мы выводим сообщения, однако не понятен принцип работы
         if msg.strip == "/history" # 🔹 Если пользователь отправил /history (пробелы по краям удалены strip).
-          rows = DB.execute("SELECT nickname, content, created_at FROM messages ORDER BY id DESC LIMIT 10") #🔹 Выполняется SQL-запрос к базе: SELECT nickname, content, created_at — выбрать нужные поля, FROM messages — из таблицы messages, ORDER BY id DESC — отсортировать по убыванию id, т.е. сначала самые свежие, LIMIT 10 — взять только 10 последних
-          rows.reverse.each do |row| # 🔹 Мы переворачиваем массив rows.reverse, чтобы сообщения шли сначала старые → потом новые, как в обычном чате. Итерируем по ним.
-            send_tpkt(sock, "[#{row['created_at']}] #{row['nickname']}: #{row['content']}") # отправка сообщение в виде [время] Ник: Сообщение
-          end
+          Message.order(id: :desc).limit(10).reverse.each do |msg|
+            send_tpkt(sock, "[#{msg.created_at.strftime('%Y-%m-%d %H:%M:%S')}] #{msg.nickname}: #{msg.content}")
+          end          
           next
         end
 
@@ -94,8 +101,12 @@ loop do
         end
 
         puts "#{nickname}: #{msg}" # если кто то пишет то мы это пишем в лог сервера
-        DB.execute("INSERT INTO messages (nickname, content) VALUES (?, ?)", [nickname, msg])
-
+        Message.create!(
+          nickname: nickname,
+          content: msg,
+          client_id: 'local-console-id'
+        )
+        
         clients.each do |cl| # и каждому клиенту
           next if cl == sock
           send_tpkt(cl, "#{nickname}: #{msg}") # рассылаем сообщение
