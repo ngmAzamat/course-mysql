@@ -21,11 +21,7 @@
     <% if Message.any? %>
       <ul class="messages">
         <% Message.all.each do |message| %>
-          <% own = (message.client_id == cookies[:client_id]) || (message.client_id == 'local-console-id') %>
-          <li class="<%= own ? 'own-message' : 'other-message' %>">
-            <strong><%= message.nickname %>:</strong>
-            <%= message.content %>
-          </li>
+            <%= render partial: "messages/message", locals: { message: message } %>
         <% end %>
       </ul>
     <% else %>

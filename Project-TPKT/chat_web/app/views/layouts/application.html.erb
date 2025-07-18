@@ -2,6 +2,7 @@
 <html>
   <head>
     <title><%= content_for(:title) || "Chat Web" %></title>
+    <script src="/cable"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -61,6 +62,16 @@
         input.selectionStart = input.selectionEnd = start + emoji.length;
       });
     });
+
+    (function() {
+      const cable = ActionCable.createConsumer();
+  
+      cable.subscriptions.create("ChatChannel", {
+        received(data) {
+          document.getElementById("messages").insertAdjacentHTML("beforeend", data);
+        }
+      });
+    })();
 
     const toggleButton = document.getElementById("theme-toggle");
 
