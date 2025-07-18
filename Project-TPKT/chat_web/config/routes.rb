@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   post "/send", to: "messages#create"
 
   get "up" => "rails/health#show", as: :rails_health_check
+  mount ActionCable.server => '/cable'
+
 end
