@@ -25,7 +25,8 @@ html,body {
     min-height: 100vh;
     padding: 10px;
     background-color: var(--background-color);
-    color: var(--color)
+    color: var(--color);
+    overflow: hidden; /* запрет общего скролла */
 }
 
 @media (max-width: 600px) {
