@@ -11,6 +11,8 @@ gem "jbuilder"
 gem 'hotwire-rails'
 gem "sqlite3", "~> 2.1"
 gem "meilisearch-rails"
+gem 'omniauth'
+gem 'omniauth-openid-connect'
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
